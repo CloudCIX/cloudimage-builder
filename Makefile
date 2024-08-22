@@ -4,11 +4,8 @@ overlay_noble:=$(shell find overlays/noble/)
 overlay_focal:=$(shell find overlays/focal/)
 overlay_jammy:=$(shell find overlays/jammy/)
 
-# FIXME: adjust this path and/or run build as root straight away
-HOME_PATH:=/home/grassler
-
-keys_path:=${HOME_PATH}/.ssh/authorized_keys 
-deb_noble:=${HOME_PATH}/pbuilder/noble_result/cloud-init_24.2-0ubuntu2~24.04.2_all.deb
+keys_path:=${HOME}/.ssh/authorized_keys
+deb_noble:=${HOME}/pbuilder/noble_result/cloud-init_24.2-0ubuntu2~24.04.2_all.deb
 
 IMAGES=focal-server-cloudimg-amd64-cloudcix.img \
        focal-server-cloudimg-amd64-cloudcix-raw.img \
