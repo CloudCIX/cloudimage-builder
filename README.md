@@ -1,3 +1,15 @@
+# Purpose
+
+The original purpose of these scripts/Makefiles is to build Ubuntu cloud images
+with a modified cloud-init package to test drive the CloudCIX data source for
+cloud-init. Please do come up with a myriad ways to use this code for other
+purposes!
+
+# Design and Contributions
+
+This code is deliberately simple to make understanding and modifying it easy.
+Please try not to add too much complexity when contributing. Thank you!
+
 # Prerequisites
 
 You need qemu-utils and make to run this:
