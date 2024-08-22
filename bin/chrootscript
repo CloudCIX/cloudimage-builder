@@ -1,0 +1,48 @@
+#!/bin/sh
+  
+usage()
+  {
+  echo "$(basename $0) - mount a cloud image, chroot into it and run one or more scripts in the chroot"
+  echo "  usage: $(basename $0) <image> <script> [<script> ...]"
+  }
+
+if [ -z "$1" ]; then
+  usage
+  exit 1
+fi
+
+if [ -z "$2" ]; then
+  usage
+  exit 1
+fi
+
+image="$1"
+shift
+
+mountpoint=$(mktemp -d)
+
+loopdev=$(losetup --show -P -f $image)
+
+sleep 3 # takes a while for partitions to be visible to lsblk(8)
+rootpart=/dev/$(lsblk -lf | grep $(basename $loopdev)p | grep ext4 | awk '{print $1}' | head -n 1)
+
+mount "$rootpart" $mountpoint
+
+# In case we need anything requiring network connectivity such as apt-get
+mv ${mountpoint}/etc/resolv.conf ${mountpoint}/etc/resolv.conf.dist
+cp /etc/resolv.conf ${mountpoint}/etc/resolv.conf
+
+if [ -z "$1" ]; then
+  chroot ${mountpoint} /bin/bash
+else
+  until [ -z "$1" ]; do
+    chroot ${mountpoint} /bin/bash < "$1"
+    shift
+  done
+fi
+
+mv ${mountpoint}/etc/resolv.conf.dist ${mountpoint}/etc/resolv.conf
+
+umount ${mountpoint}
+losetup -d $loopdev
+rmdir ${mountpoint}

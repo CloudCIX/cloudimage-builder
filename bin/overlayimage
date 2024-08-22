@@ -1,0 +1,39 @@
+#!/bin/sh
+  
+usage()
+  {
+  echo "$(basename $0) - copy one or more overlay directories' content over a cloud image"
+  echo "  usage: $(basename $0) <image> <overlay directory> [ <overlay directory> ... ]"
+  }
+
+if [ -z "$1" ]; then
+  usage
+  exit 1
+fi
+
+if [ -z "$2" ]; then
+  usage
+  exit 1
+fi
+
+image="$1"
+shift
+
+mountpoint=$(mktemp -d)
+
+loopdev=$(losetup --show -P -f $image)
+
+sleep 3 # takes a while for partitions to be visible to lsblk(8)
+rootpart=/dev/$(lsblk -lf | grep $(basename $loopdev)p | grep ext4 | awk '{print $1}' | head -n 1)
+
+mount "$rootpart" $mountpoint
+
+while [ -n "$1" ]; do
+  overlay_dir=$1
+  tar -C "$overlay_dir" -cpf - . | tar -C "${mountpoint}" -xvpf -
+  shift
+done
+
+umount ${mountpoint}
+losetup -d $loopdev
+rmdir ${mountpoint}

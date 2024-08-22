@@ -1,0 +1,34 @@
+#!/bin/sh
+
+usage()
+  {
+  echo "$(basename $0) - mount a cloud image and cd into it"
+  echo "  usage: $(basename $0) <image>"
+  }
+
+if [ -z "$1" ]; then
+  usage
+  exit 1
+fi
+
+image="$1"
+
+mountpoint=$(mktemp -d)
+echo "mount point: $mountpoint"
+
+loopdev=$(losetup --show -P -f $image)
+echo "Loop device: $loopdev"
+
+sleep 3 # takes a while for partitions to be visible to lsblk(8)
+rootpart=/dev/$(lsblk -lf | grep $(basename $loopdev)p | grep ext4 | awk '{print $1}' | head -n 1)
+
+mount "$rootpart" $mountpoint
+
+cd ${mountpoint}
+export PS1="$(basename $mountpoint) \\w# "
+/bin/sh
+cd $OLDPWD
+
+umount ${mountpoint}
+losetup -d $loopdev
+rmdir ${mountpoint}
