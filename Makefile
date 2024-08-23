@@ -6,6 +6,8 @@ overlay_jammy:=$(shell find overlays/jammy/)
 
 keys_path:=${HOME}/.ssh/authorized_keys
 deb_noble:=${HOME}/pbuilder/noble_result/cloud-init_24.2-0ubuntu2~24.04.2_all.deb
+deb_jammy:=${HOME}/pbuilder/jammy_result/cloud-init_24.2-0ubuntu2~22.04.1_all.deb
+deb_focal:=${HOME}/pbuilder/focal_result/cloud-init_24.2-0ubuntu2~20.04.1_all.deb
 
 IMAGES=focal-server-cloudimg-amd64-cloudcix.img \
        focal-server-cloudimg-amd64-cloudcix-raw.img \
@@ -30,7 +32,7 @@ focal-server-cloudimg-amd64-cloudcix.img: focal-server-cloudimg-amd64-cloudcix-r
 	qemu-img convert -O qcow2 $< $@
 
 
-jammy-server-cloudimg-amd64-cloudcix-raw.img: jammy-server-cloudimg-amd64.img overlays $(overlay_jammy) ${keys_path} ${deb_jammy}} setup-scripts/jammy.sh
+jammy-server-cloudimg-amd64-cloudcix-raw.img: jammy-server-cloudimg-amd64.img overlays $(overlay_jammy) ${keys_path} ${deb_jammy} setup-scripts/jammy.sh
 	qemu-img convert -O raw $< $@
 	install -D -o root ${deb_jammy} -t overlays/jammy/root/
 	install -D -o root ${keys_path} -t overlays/jammy/root/.ssh/
@@ -54,5 +56,3 @@ noble-server-cloudimg-amd64-cloudcix.img: noble-server-cloudimg-amd64-cloudcix-r
 
 clean:
 	rm -f $(IMAGES)
-
-focal-server-cloudimg-amd64-stick.img: focal-server-cloudimg-amd64-install.img
