@@ -6,7 +6,7 @@ overlay_jammy:=$(shell find overlays/jammy/)
 
 keys_path:=${HOME}/.ssh/authorized_keys
 deb_noble:=${HOME}/pbuilder/noble_result/cloud-init_24.3.1-0ubuntu2~24.04.1_all.deb
-deb_jammy:=${HOME}/pbuilder/jammy_result/cloud-init_24.3.1-0ubuntu2~22.04_all.deb
+deb_jammy:=${HOME}/pbuilder/jammy_result/cloud-init_24.3.1-0ubuntu2~22.04.1_all.deb
 deb_focal:=${HOME}/pbuilder/focal_result/cloud-init_24.3.1-0ubuntu2~20.04.1_all.deb
 
 IMAGES=focal-server-cloudimg-amd64-cloudcix.img \
